@@ -1,0 +1,64 @@
+-- Ini adalah perintah untuk membuat database (wadah besar untuk data) bernama 'codemaster'.
+-- Jika database dengan nama yang sama sudah ada, perintah ini tidak akan melakukan apa-apa.
+CREATE DATABASE IF NOT EXISTS codemaster;
+
+-- Setelah database dibuat atau dipastikan ada, perintah ini memilih 'codemaster'
+-- sebagai database yang akan kita gunakan untuk semua operasi selanjutnya.
+USE codemaster;
+
+-- Ini adalah perintah untuk membuat tabel (seperti buku daftar) bernama 'users'.
+-- Tabel ini akan menyimpan informasi tentang semua pengguna aplikasi CodeMaster.
+CREATE TABLE IF NOT EXISTS users (
+    -- 'id' adalah kolom untuk nomor identitas unik setiap pengguna.
+    -- 'INT' berarti ini angka bulat.
+    -- 'AUTO_INCREMENT' berarti nomor ini akan otomatis bertambah untuk setiap pengguna baru.
+    -- 'PRIMARY KEY' berarti ini adalah kunci utama yang memastikan setiap ID unik dan tidak kosong.
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    -- 'name' adalah kolom untuk menyimpan nama lengkap pengguna.
+    -- 'VARCHAR(255)' berarti ini teks hingga 255 karakter.
+    -- 'NOT NULL' berarti kolom ini wajib diisi, tidak boleh kosong.
+    name VARCHAR(255) NOT NULL,
+    -- 'email' adalah kolom untuk menyimpan alamat email pengguna.
+    -- 'UNIQUE' memastikan setiap email berbeda, tidak ada yang kembar.
+    -- 'NOT NULL' berarti ini juga wajib diisi.
+    email VARCHAR(255) UNIQUE NOT NULL,
+    -- 'password' adalah kolom untuk menyimpan kata sandi pengguna.
+    -- Ingat, di aplikasi PHP nanti, password harus diacak (hash) dulu sebelum disimpan di sini demi keamanan.
+    -- 'NOT NULL' berarti wajib diisi.
+    password VARCHAR(255) NOT NULL,
+    -- 'created_at' adalah kolom yang secara otomatis mencatat kapan akun pengguna ini dibuat.
+    -- 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' berarti waktu saat ini akan otomatis tercatat.
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Ini adalah perintah untuk membuat tabel lain bernama 'bookings'.
+-- Tabel ini akan menyimpan semua detail pemesanan kursus yang dilakukan oleh pengguna.
+CREATE TABLE IF NOT EXISTS bookings (
+    -- 'id' adalah nomor identitas unik untuk setiap pemesanan kursus.
+    -- Sama seperti 'id' di tabel 'users', ini 'AUTO_INCREMENT' dan 'PRIMARY KEY'.
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    -- 'user_id' adalah kolom yang menyimpan ID dari pengguna yang melakukan pemesanan ini.
+    -- Ini penting untuk menghubungkan pemesanan dengan pengguna tertentu.
+    -- 'NOT NULL' berarti harus ada ID pengguna.
+    user_id INT NOT NULL,
+    -- 'language' adalah kolom untuk bahasa pemrograman yang dipesan (misalnya 'Python', 'JavaScript').
+    -- 'VARCHAR(50)' berarti teks hingga 50 karakter dan 'NOT NULL' berarti wajib diisi.
+    language VARCHAR(50) NOT NULL,
+    -- 'date' adalah kolom untuk tanggal kursus yang dipesan.
+    -- 'DATE' berarti ini hanya menyimpan tanggal (YYYY-MM-DD). 'NOT NULL' berarti wajib diisi.
+    date DATE NOT NULL,
+    -- 'time' adalah kolom untuk waktu kursus yang dipesan.
+    -- 'TIME' berarti ini hanya menyimpan waktu (HH:MM:SS). 'NOT NULL' berarti wajib diisi.
+    time TIME NOT NULL,
+    -- 'notes' adalah kolom untuk catatan tambahan dari pengguna terkait pemesanan.
+    -- 'TEXT' berarti bisa menampung teks yang sangat panjang. Ini boleh kosong.
+    notes TEXT,
+    -- 'created_at' adalah kolom yang otomatis mencatat kapan pemesanan ini dibuat.
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Ini adalah 'FOREIGN KEY' atau kunci asing.
+    -- Ini menciptakan hubungan antara tabel 'bookings' dan tabel 'users'.
+    -- Artinya, nilai di kolom 'user_id' pada tabel 'bookings' harus ada di kolom 'id' pada tabel 'users'.
+    -- 'ON DELETE CASCADE' berarti jika seorang pengguna dihapus dari tabel 'users',
+    -- semua pemesanan yang terkait dengan pengguna tersebut di tabel 'bookings' juga akan otomatis terhapus.
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
